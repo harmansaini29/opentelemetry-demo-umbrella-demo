@@ -1,0 +1,27 @@
+# Copyright Project UMBRELLA & OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Project UMBRELLA Root Cause Intelligence Agent (Agent 1) Integration
+# Runs alongside OpenTelemetry Astronomy Shop webstore microservices.
+
+services:
+  umbrella-rca-agent:
+    container_name: umbrella-rca-agent
+    build:
+      context: ./src/umbrella_rca
+      dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          memory: 400M
+    restart: unless-stopped
+    ports:
+      - "8085:8085"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - OTEL_SERVICE_NAME=umbrella-rca-agent
+      - UMBRELLA_RCA_PORT=8085
+    depends_on:
+      - otel-collector
+    networks:
+      - default
